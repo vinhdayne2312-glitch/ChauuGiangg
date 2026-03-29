@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Happy Birthday 🎂</title>
+
+<style>
+body{
+  margin:0;
+  overflow:hidden;
+  font-family: Arial;
+  background:black;
+  color:white;
+  text-align:center;
+}
+
+/* SCREEN */
+.screen{
+  position:fixed;
+  width:100%;
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  transition:1s;
+}
+
+.hide{
+  opacity:0;
+  pointer-events:none;
+}
+
+/* INTRO */
+#intro h1{
+  font-size:45px;
+  animation: glow 2s infinite alternate;
+}
+
+#count{
+  font-size:90px;
+}
+
+/* STORY */
+#story{
+  font-size:28px;
+  padding:20px;
+}
+
+/* MAIN */
+#main{
+  background: radial-gradient(circle,#ff758c,#ff7eb3);
+}
+
+img{
+  width:180px;
+  height:180px;
+  border-radius:50%;
+  border:5px solid white;
+  box-shadow:0 0 30px pink;
+}
+
+/* BUTTON */
+button{
+  margin-top:20px;
+  padding:12px 25px;
+  border:none;
+  border-radius:10px;
+  background:#ff4081;
+  color:white;
+  font-size:18px;
+  cursor:pointer;
+}
+
+/* GLOW */
+@keyframes glow{
+  from{ text-shadow:0 0 10px white;}
+  to{ text-shadow:0 0 40px pink;}
+}
+
+/* FIREWORK */
+.firework{
+  position:absolute;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  animation:boom 1s forwards;
+}
+
+@keyframes boom{
+  to{
+    transform:translate(var(--x),var(--y));
+    opacity:0;
+  }
+}
+
+/* HEART */
+.heart{
+  position:absolute;
+  animation:fly 2s linear forwards;
+}
+
+@keyframes fly{
+  to{
+    transform:translateY(-200px);
+    opacity:0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- INTRO -->
+<div id="intro" class="screen">
+  <h1>🎬 Một điều đặc biệt...</h1>
+  <button id="startBtn">Bắt đầu</button>
+  <div id="count"></div>
+</div>
+
+<!-- STORY -->
+<div id="storyScreen" class="screen hide">
+  <div id="story"></div>
+</div>
+
+<!-- MAIN -->
+<div id="main" class="screen hide">
+  <h1>🎂 Happy Birthday 🎂</h1>
+  <img src="https://lh3.googleusercontent.com/d/1dA-BL6QTt7eoxq7MA7NBv0gp1sYs7D-d">
+  <div id="msg"></div>
+  <button onclick="boom()">🎉 Bùng nổ</button>
+</div>
+
+<audio id="music" loop>
+<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3">
+</audio>
+
+<script>
+
+let started = false;
+
+// START BUTTON FIX
+document.getElementById("startBtn").addEventListener("click", function(){
+  let intro = document.getElementById("intro");
+  let count = document.getElementById("count");
+
+  intro.classList.add("hide");
+
+  let c = 3;
+
+  let interval = setInterval(()=>{
+    count.innerHTML = c;
+    c--;
+
+    if(c < 0){
+      clearInterval(interval);
+      showStory();
+    }
+  },800);
+});
+
+// STORY
+let storyText = [
+  "Hôm nay là một ngày đặc biệt...",
+  "Có một người cực kỳ tuyệt vời...",
+  "Luôn mang lại niềm vui...",
+  "Và người đó chính là...",
+  "🎉 BẠN 🎉"
+];
+
+let i=0;
+
+function showStory(){
+  document.getElementById("storyScreen").classList.remove("hide");
+
+  let box = document.getElementById("story");
+
+  function next(){
+    if(i < storyText.length){
+      box.innerHTML = storyText[i];
+      i++;
+      setTimeout(next,2000);
+    } else {
+      showMain();
+    }
+  }
+  next();
+}
+
+// MAIN
+function showMain(){
+  document.getElementById("storyScreen").classList.add("hide");
+  document.getElementById("main").classList.remove("hide");
+
+  started = true;
+
+  document.getElementById("music").play().catch(()=>{});
+  typing();
+}
+
+// TEXT
+let text="Chúc bạn sinh nhật vui vẻ 🎂 luôn hạnh phúc và thành công 🎉";
+let j=0;
+
+function typing(){
+  if(j<text.length){
+    document.getElementById("msg").innerHTML+=text[j];
+    j++;
+    setTimeout(typing,40);
+  }
+}
+
+// FIREWORK
+function boom(){
+  for(let i=0;i<120;i++){
+    let f=document.createElement("div");
+    f.className="firework";
+    f.style.left="50%";
+    f.style.top="50%";
+    f.style.setProperty('--x',(Math.random()*600-300)+"px");
+    f.style.setProperty('--y',(Math.random()*600-300)+"px");
+    f.style.background=`hsl(${Math.random()*360},100%,50%)`;
+    document.body.appendChild(f);
+    setTimeout(()=>f.remove(),1000);
+  }
+}
+
+// HEART FIX
+document.addEventListener("mousemove", e=>{
+  if(!started) return;
+
+  let h=document.createElement("div");
+  h.className="heart";
+  h.innerHTML="💖";
+  h.style.left=e.clientX+"px";
+  h.style.top=e.clientY+"px";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),2000);
+});
+
+</script>
+
+</body>
+</html>
